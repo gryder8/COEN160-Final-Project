@@ -175,10 +175,15 @@ public class View extends JFrame {
         JScrollPane pane = new JScrollPane();
         Object[][] data = LeaderboardModel.shared.getTableData();
         System.out.println("data[0][0] = " + data[0][0]);
-        pane.add(new JTable(LeaderboardModel.shared.getTableData(), LeaderboardModel.shared.colNames));
+        JTable table = new JTable(LeaderboardModel.shared.getTableData(), LeaderboardModel.shared.colNames);
+        table.setSize(500, 300);
+        table.setVisible(true);
+        pane.add(table);
         pane.setSize(new Dimension(500, 300));
         container.setSize(new Dimension(500, 300));
+        pane.setVisible(true);
         container.add(pane);
+        container.setVisible(true);
         return container;
     }
 
