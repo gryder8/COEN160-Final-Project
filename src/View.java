@@ -65,7 +65,6 @@ public class View extends JFrame {
         Font font = center.getFont();
         Font boldFont = new Font(font.getFontName(), Font.BOLD, 18);
         center.setFont(boldFont);
-
         center.setVerticalAlignment(JLabel.CENTER);
         center.setHorizontalAlignment(JLabel.CENTER);
         center.setOpaque(true);
