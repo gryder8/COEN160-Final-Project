@@ -135,10 +135,15 @@ public class View extends JFrame {
         this.menubar.add(leaderboard);
         leaderboard.add(showBoard);
         ActionListener listener = e -> {
+            if (LeaderboardModel.shared.isEmpty) { return; }
             System.out.println("LBoard!");
             JFrame board = new JFrame("Leaderboard");
             board.setSize(500, 300);
-            board.setContentPane(createLeaderboardView());
+            JPanel b = createLeaderboardView();
+            b.setVisible(true);
+            b.setSize(500, 300);
+            System.out.println("b.getComponentCount() = " + b.getComponentCount());
+            board.setContentPane(b);
             board.setVisible(true);
         };
         showBoard.addActionListener(listener);
@@ -172,16 +177,13 @@ public class View extends JFrame {
 
     private JPanel createLeaderboardView() {
         JPanel container = new JPanel();
-        JScrollPane pane = new JScrollPane();
         Object[][] data = LeaderboardModel.shared.getTableData();
         System.out.println("data[0][0] = " + data[0][0]);
         JTable table = new JTable(LeaderboardModel.shared.getTableData(), LeaderboardModel.shared.colNames);
-        table.setSize(500, 300);
+        table.setBounds(0, 0, 200, 300);
         table.setVisible(true);
-        pane.add(table);
-        pane.setSize(new Dimension(500, 300));
+        JScrollPane pane = new JScrollPane(table);
         container.setSize(new Dimension(500, 300));
-        pane.setVisible(true);
         container.add(pane);
         container.setVisible(true);
         return container;

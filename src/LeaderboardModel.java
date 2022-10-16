@@ -8,11 +8,14 @@ public class LeaderboardModel {
     String[] colNames = new String[]{"Username", "Score"};
     private Map<String, Integer> scores = new HashMap<>();
 
+    public boolean isEmpty = true;
+
 
     public void createOrUpdateScoreForUsername(String username, int score) {
         System.out.println("username = " + username);
         System.out.println("score = " + score);
         scores.put(username, score);
+        isEmpty = false;
     }
 
      public Object[][] getTableData() {
