@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -43,7 +44,7 @@ public class View extends JFrame {
         scoreSlider.setEnabled(false);
         scoreSlider.setValue(controller.getScore());
         scoreSlider.setPaintTicks(true);
-        scoreSlider.setMajorTickSpacing(dataWordModel.maxScore / 6);
+        scoreSlider.setMajorTickSpacing(Math.max(dataWordModel.maxScore / 6, 1));
         scoreSlider.setUI(new CustomSliderUI(scoreSlider));
         scoreSlider.setPaintLabels(true);
         scoreSlider.setPaintTicks(true);
@@ -136,13 +137,11 @@ public class View extends JFrame {
         leaderboard.add(showBoard);
         ActionListener listener = e -> {
             if (LeaderboardModel.shared.isEmpty) { return; }
-            System.out.println("LBoard!");
             JFrame board = new JFrame("Leaderboard");
             board.setSize(500, 300);
             JPanel b = createLeaderboardView();
             b.setVisible(true);
             b.setSize(500, 300);
-            System.out.println("b.getComponentCount() = " + b.getComponentCount());
             board.setContentPane(b);
             board.setVisible(true);
         };
@@ -190,12 +189,24 @@ public class View extends JFrame {
     }
 
     private JPanel createLeaderboardView() {
+
+
+
         JPanel container = new JPanel();
         Object[][] data = LeaderboardModel.shared.getTableData();
-        System.out.println("data[0][0] = " + data[0][0]);
-        JTable table = new JTable(LeaderboardModel.shared.getTableData(), LeaderboardModel.shared.colNames);
-        table.setBounds(0, 0, 200, 300);
+        //System.out.println("data[0][0] = " + data[0][0]);
+        JTable table = new JTable();
+        //table.setBounds(0, 0, 200, 300);
         table.setVisible(true);
+
+        DefaultTableModel tableModel = new DefaultTableModel(data, LeaderboardModel.shared.colNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        table.setModel(tableModel);
         JScrollPane pane = new JScrollPane(table);
         container.setSize(new Dimension(500, 300));
         container.add(pane);
