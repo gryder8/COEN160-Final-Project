@@ -176,7 +176,6 @@ public class View extends JFrame {
                  controller.submitToLeaderboard();
                  controller.resetGame();
                  usernameField.setVisible(true);
-                 //usernameLbl.setText("Username: " + controller.getUsername());
                  updateScoreField();
                  scoreSlider.setValue(controller.getScore());
                  usernameLbl.setText("Username: ");
@@ -194,9 +193,7 @@ public class View extends JFrame {
 
         JPanel container = new JPanel();
         Object[][] data = LeaderboardModel.shared.getTableData();
-        //System.out.println("data[0][0] = " + data[0][0]);
         JTable table = new JTable();
-        //table.setBounds(0, 0, 200, 300);
         table.setVisible(true);
 
         DefaultTableModel tableModel = new DefaultTableModel(data, LeaderboardModel.shared.colNames) {
@@ -235,6 +232,7 @@ public class View extends JFrame {
         setResizable(false);
         setVisible(true);
         updateUI();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
 
