@@ -172,7 +172,7 @@ public class View extends JFrame {
         submitToLeaderboard.setSize(50, 30);
         submitToLeaderboard.setHorizontalAlignment(0);
         ActionListener submitToBoard = e -> {
-             if (!controller.getUsername().isEmpty()) {
+             if (controller.getUsername() != null && !controller.getUsername().isEmpty()) {
                  controller.submitToLeaderboard();
                  controller.resetGame();
                  usernameField.setVisible(true);

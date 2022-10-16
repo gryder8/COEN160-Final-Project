@@ -14,6 +14,8 @@ public class WordModel {
 
     private ArrayList<String> allPossibleWords = new ArrayList<>();
 
+    private ArrayList<String>  allPossibleWordsCached = new ArrayList<>();
+
     public int maxScore = 0;
 
     public int getNumPossibleWords() {
@@ -56,6 +58,7 @@ public class WordModel {
 
     private boolean onlyContainsValidChars(String w) {
         boolean foundCenterLetter = false;
+        if (w.length() < 4) { return false; }
         for (char c : w.toCharArray()) {
             if (!letters.contains(c)) {
                 return false;
@@ -131,11 +134,21 @@ public class WordModel {
     }
 
     private void calcAllValidWords() {
-        for (String word: words) {
-            if (onlyContainsValidChars(word)) {
-                allPossibleWords.add(word);
+        long startTime = System.nanoTime();
+        if (!allPossibleWordsCached.isEmpty()) {
+            System.out.println("Words are cached, using cache!");
+            allPossibleWords.clear();
+            allPossibleWords.addAll(allPossibleWordsCached);
+        } else {
+            for (String word : words) {
+                if (onlyContainsValidChars(word)) {
+                    allPossibleWords.add(word);
+                }
             }
+            allPossibleWordsCached.addAll(allPossibleWords);
         }
+        long runTime = System.nanoTime() - startTime;
+        System.out.println("Generating words took " + runTime/1E6 + " ms") ;
         System.out.println("allPossibleWords.count = " + allPossibleWords.size());
         System.out.println("allPossibleWords = " + allPossibleWords);
     }
