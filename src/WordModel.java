@@ -20,6 +20,12 @@ public class WordModel {
         return allPossibleWords.size();
     }
 
+    public void shuffleLetters() {
+        List<Character> shuffleMe = new ArrayList<>(this.letters);
+        Collections.shuffle(shuffleMe);
+        this.letters = new TreeSet<>(shuffleMe);
+    }
+
     private void calculateHighestPossibleScore() {
         int score = 0;
         for (String word : allPossibleWords) {
@@ -34,6 +40,7 @@ public class WordModel {
     public char getCenterLetter() {
         return centerLetter;
     }
+
 
     static WordModel shared = new WordModel();
     WordModel() {
@@ -63,7 +70,12 @@ public class WordModel {
         if (word.length() < 4) {
             return false;
         } else {
-            return words.contains(word) && onlyContainsValidChars(word);
+            boolean valid =  allPossibleWords.contains(word) && onlyContainsValidChars(word);
+            if (valid) {
+                //remove
+                allPossibleWords.remove(word);
+            }
+            return valid;
         }
     }
 

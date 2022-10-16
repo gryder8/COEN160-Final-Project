@@ -58,8 +58,8 @@ public class CustomSliderUI extends BasicSliderUI {
         int x2 = thumbRect.x + thumbRect.width;
         int width = thumbRect.width - 4;
         int topY = thumbRect.y + thumbRect.height / 2 - thumbRect.width / 3;
-        Ellipse2D inner = new Ellipse2D.Double(x1+1, thumbRect.y, 13, 13);
-        Ellipse2D outer = new Ellipse2D.Double(x1, thumbRect.y-1, 15, 15);
+        Ellipse2D inner = new Ellipse2D.Double(x1+1, thumbRect.y+2, 13, 13);
+        Ellipse2D outer = new Ellipse2D.Double(x1, thumbRect.y+1, 15, 15);
 //        GeneralPath shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
 //        shape.moveTo(x1, topY);
 //        shape.lineTo(x2, topY);
