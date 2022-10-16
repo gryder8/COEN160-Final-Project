@@ -151,18 +151,21 @@ public class View extends JFrame {
 
     private void configUserName() {
         userNameContainer.setLayout(new BorderLayout(0 ,0));
+        userNameContainer.setBorder(BorderFactory.createEmptyBorder(50,100,5,80));
         final JLabel usernameLbl = new JLabel("Username: ");
         JTextField usernameField = new JTextField(controller.getUsername());
         usernameField.setMaximumSize(new Dimension(150, 30));
         usernameField.setPreferredSize(new Dimension(130, 30));
         ActionListener usernameSubmitListener = e -> {
-            controller.setUsername(usernameField.getText());
+            String name = usernameField.getText();
+            if (name.trim().isEmpty()) { return; }
+            controller.setUsername(name);
             usernameField.setVisible(false);
             usernameLbl.setText(" Username: " + controller.getUsername());
         };
         usernameField.addActionListener(usernameSubmitListener);
         usernameLbl.setHorizontalAlignment(0);
-        usernameField.setHorizontalAlignment(0);
+        usernameField.setHorizontalAlignment(SwingConstants.LEADING);
         userNameContainer.add(usernameLbl, BorderLayout.WEST);
         userNameContainer.add(usernameField, BorderLayout.CENTER);
 
@@ -174,9 +177,10 @@ public class View extends JFrame {
                  controller.submitToLeaderboard();
                  controller.resetGame();
                  usernameField.setVisible(true);
-                 usernameLbl.setText("Username: " + controller.getUsername());
+                 //usernameLbl.setText("Username: " + controller.getUsername());
                  updateScoreField();
                  scoreSlider.setValue(controller.getScore());
+                 usernameLbl.setText("Username: ");
                  wordsRem.setText("Possible Words: " + (dataWordModel.getNumPossibleWords()));
              }
         };
