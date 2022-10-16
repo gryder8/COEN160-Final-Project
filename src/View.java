@@ -7,23 +7,24 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class View extends JFrame {
-    private WordModel dataWordModel = WordModel.shared;
-    private Controller controller = new Controller();
+    private final WordModel dataWordModel = WordModel.shared;
+    private final Controller controller = new Controller();
 
-    private JMenuBar menubar = new JMenuBar();
-    private JMenu leaderboard = new JMenu("Leaderboard");
-    private JMenuItem showBoard = new JMenuItem("Show Leaderboard");
+    private final JMenuBar menubar = new JMenuBar();
+    private final JMenu leaderboard = new JMenu("Leaderboard");
+    private final JMenuItem showBoard = new JMenuItem("Show Leaderboard");
 
-    private JPanel parentContainer = new JPanel();
-    private JPanel honeycombContainer = new JPanel();
-    private JPanel userEntryContainer = new JPanel();
-    private JPanel userNameContainer = new JPanel();
-    private JPanel topBarContainer = new JPanel();
+    private final JLabel wordsRem = new JLabel("Possible Words: " + (dataWordModel.getNumPossibleWords()));
 
-    private JSlider scoreSlider = new JSlider();
-    private JLabel scoreDisplay = new JLabel("Score: 0");
-    private JLabel alert = new JLabel();
-    private String userEntry = "";
+
+    private final JPanel parentContainer = new JPanel();
+    private final JPanel honeycombContainer = new JPanel();
+    private final JPanel userEntryContainer = new JPanel();
+    private final JPanel userNameContainer = new JPanel();
+    private final JPanel topBarContainer = new JPanel();
+
+    private final JSlider scoreSlider = new JSlider();
+    private final JLabel scoreDisplay = new JLabel("Score: 0");
 
 
 
@@ -103,7 +104,6 @@ public class View extends JFrame {
         alert.setHorizontalAlignment(0);
         DocumentFilter filter = new UppercaseDocumentFilter();
         userEntryContainer.setLayout(new GridLayout(0, 1));
-        JLabel wordsRem = new JLabel("Possible Words: " + (dataWordModel.getNumPossibleWords()));
         wordsRem.setHorizontalAlignment(0);
         JTextField field = new JTextField();
         ((AbstractDocument) field.getDocument()).setDocumentFilter(filter);
@@ -150,28 +150,38 @@ public class View extends JFrame {
     }
 
     private void configUserName() {
-        userNameContainer.setLayout(new GridLayout(0, 2));
+        userNameContainer.setLayout(new BorderLayout(0 ,0));
         final JLabel usernameLbl = new JLabel("Username: ");
         JTextField usernameField = new JTextField(controller.getUsername());
+        usernameField.setMaximumSize(new Dimension(150, 30));
+        usernameField.setPreferredSize(new Dimension(130, 30));
         ActionListener usernameSubmitListener = e -> {
             controller.setUsername(usernameField.getText());
+            usernameField.setVisible(false);
+            usernameLbl.setText(" Username: " + controller.getUsername());
         };
         usernameField.addActionListener(usernameSubmitListener);
         usernameLbl.setHorizontalAlignment(0);
         usernameField.setHorizontalAlignment(0);
-        userNameContainer.add(usernameLbl);
-        userNameContainer.add(usernameField);
+        userNameContainer.add(usernameLbl, BorderLayout.WEST);
+        userNameContainer.add(usernameField, BorderLayout.CENTER);
 
-        JButton submitToLeaderboard = new JButton("Submit Score");
+        JButton submitToLeaderboard = new JButton("Submit Score and End Game");
         submitToLeaderboard.setSize(50, 30);
         submitToLeaderboard.setHorizontalAlignment(0);
         ActionListener submitToBoard = e -> {
              if (!controller.getUsername().isEmpty()) {
                  controller.submitToLeaderboard();
+                 controller.resetGame();
+                 usernameField.setVisible(true);
+                 usernameLbl.setText("Username: " + controller.getUsername());
+                 updateScoreField();
+                 scoreSlider.setValue(controller.getScore());
+                 wordsRem.setText("Possible Words: " + (dataWordModel.getNumPossibleWords()));
              }
         };
         submitToLeaderboard.addActionListener(submitToBoard);
-        userNameContainer.add(submitToLeaderboard);
+        userNameContainer.add(submitToLeaderboard, BorderLayout.SOUTH);
         userNameContainer.setVisible(true);
     }
 

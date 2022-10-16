@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +26,9 @@ public class LeaderboardModel {
         for (String username: scores.keySet()) {
             tableData[index][0] = username;
             tableData[index][1] = scores.get(username);
+            index++;
         }
+         Arrays.sort(tableData, (a, b) -> Integer.compare((int)b[1],(int)a[1]));
 
         return tableData;
     }

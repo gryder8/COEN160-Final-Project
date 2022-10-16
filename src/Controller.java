@@ -20,6 +20,12 @@ public class Controller {
         return score;
     }
 
+    public void resetGame() {
+        this.username = "";
+        this.score = 0;
+        dataWordModel.resetValidWords();
+    }
+
     private final WordModel dataWordModel = WordModel.shared;
     private final LeaderboardModel leaderboardModel = LeaderboardModel.shared;
 

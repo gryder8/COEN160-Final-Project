@@ -140,6 +140,11 @@ public class WordModel {
         System.out.println("allPossibleWords = " + allPossibleWords);
     }
 
+    public void resetValidWords() {
+        this.allPossibleWords.clear();
+        calcAllValidWords();
+    }
+
 
 
 }
