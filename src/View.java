@@ -7,6 +7,7 @@ import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+//TODO: Modularize this code, specifically event handling
 public class View extends JFrame {
     private final WordModel dataWordModel = WordModel.shared;
     private final Controller controller = new Controller();

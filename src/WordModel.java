@@ -5,7 +5,7 @@ import java.util.*;
 
 public class WordModel {
     private final TreeSet<String> words = new TreeSet<>();
-    private TreeSet<Character> letters = new TreeSet<>();
+    private final TreeSet<Character> letters = new TreeSet<>();
 
     public TreeSet<Character> getLetters() {
         return letters;
