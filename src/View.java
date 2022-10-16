@@ -17,7 +17,7 @@ public class View extends JFrame {
     private JPanel parentContainer = new JPanel();
     private JPanel honeycombContainer = new JPanel();
     private JPanel userEntryContainer = new JPanel();
-    private JPanel buttonContainer = new JPanel();
+    private JPanel userNameContainer = new JPanel();
     private JPanel topBarContainer = new JPanel();
 
     private JSlider scoreSlider = new JSlider();
@@ -94,17 +94,6 @@ public class View extends JFrame {
                 honeycombContainer.add(empty2);
             }
         }
-//        JLabel empty1 = new JLabel();
-//        JLabel empty2 = new JLabel();
-//        empty1.setSize(new Dimension(50,50));
-//        empty2.setSize(new Dimension(50,50));
-//        honeycombContainer.add(empty1);
-//        honeycombContainer.add(center);
-//        honeycombContainer.add(empty2);
-
-//        JTextField field = new JTextField(dataWordModel.getLetters().toString());
-//        field.setEditable(false);
-        //honeycombContainer.add(field);
         honeycombContainer.setVisible(true);
     }
 
@@ -149,10 +138,48 @@ public class View extends JFrame {
             System.out.println("LBoard!");
             JFrame board = new JFrame("Leaderboard");
             board.setSize(500, 300);
-            board.setContentPane(new JPanel());
+            board.setContentPane(createLeaderboardView());
             board.setVisible(true);
         };
         showBoard.addActionListener(listener);
+    }
+
+    private void configUserName() {
+        userNameContainer.setLayout(new GridLayout(0, 2));
+        final JLabel usernameLbl = new JLabel("Username: ");
+        JTextField usernameField = new JTextField(controller.getUsername());
+        ActionListener usernameSubmitListener = e -> {
+            controller.setUsername(usernameField.getText());
+        };
+        usernameField.addActionListener(usernameSubmitListener);
+        usernameLbl.setHorizontalAlignment(0);
+        usernameField.setHorizontalAlignment(0);
+        userNameContainer.add(usernameLbl);
+        userNameContainer.add(usernameField);
+
+        JButton submitToLeaderboard = new JButton("Submit Score");
+        submitToLeaderboard.setSize(50, 30);
+        submitToLeaderboard.setHorizontalAlignment(0);
+        ActionListener submitToBoard = e -> {
+             if (!controller.getUsername().isEmpty()) {
+                 controller.submitToLeaderboard();
+             }
+        };
+        submitToLeaderboard.addActionListener(submitToBoard);
+        userNameContainer.add(submitToLeaderboard);
+        userNameContainer.setVisible(true);
+    }
+
+    private JPanel createLeaderboardView() {
+        JPanel container = new JPanel();
+        JScrollPane pane = new JScrollPane();
+        Object[][] data = LeaderboardModel.shared.getTableData();
+        System.out.println("data[0][0] = " + data[0][0]);
+        pane.add(new JTable(LeaderboardModel.shared.getTableData(), LeaderboardModel.shared.colNames));
+        pane.setSize(new Dimension(500, 300));
+        container.setSize(new Dimension(500, 300));
+        container.add(pane);
+        return container;
     }
 
 
@@ -161,6 +188,7 @@ public class View extends JFrame {
         configureTextEntry();
         configureHoneycombView();
         configMenu();
+        configUserName();
     }
 
     void present() {
@@ -169,26 +197,31 @@ public class View extends JFrame {
         parentContainer.add(topBarContainer);
         parentContainer.add(honeycombContainer);
         parentContainer.add(userEntryContainer);
+        parentContainer.add(userNameContainer);
         setContentPane(parentContainer);
         setSize(500, 500);
         setResizable(false);
         setVisible(true);
         updateUI();
     }
+
+
+
+    private static class UppercaseDocumentFilter extends DocumentFilter {
+        public void insertString(DocumentFilter.FilterBypass fb, int offset,
+                                 String text, AttributeSet attr) throws BadLocationException {
+
+            fb.insertString(offset, text.toUpperCase(), attr);
+        }
+
+        public void replace(DocumentFilter.FilterBypass fb, int offset, int length,
+                            String text, AttributeSet attrs) throws BadLocationException {
+
+            fb.replace(offset, length, text.toUpperCase(), attrs);
+        }
+    }
 }
 
-class UppercaseDocumentFilter extends DocumentFilter {
-    public void insertString(DocumentFilter.FilterBypass fb, int offset,
-                             String text, AttributeSet attr) throws BadLocationException {
 
-        fb.insertString(offset, text.toUpperCase(), attr);
-    }
-
-    public void replace(DocumentFilter.FilterBypass fb, int offset, int length,
-                        String text, AttributeSet attrs) throws BadLocationException {
-
-        fb.replace(offset, length, text.toUpperCase(), attrs);
-    }
-}
 
 

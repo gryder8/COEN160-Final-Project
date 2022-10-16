@@ -2,6 +2,16 @@ public class Controller {
     private int score;
     private int wordsScored;
 
+    private String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public int getWordsScored() {
         return wordsScored;
     }
@@ -10,7 +20,12 @@ public class Controller {
         return score;
     }
 
-    private WordModel dataWordModel = WordModel.shared;
+    private final WordModel dataWordModel = WordModel.shared;
+    private final LeaderboardModel leaderboardModel = LeaderboardModel.shared;
+
+    public void submitToLeaderboard() {
+        leaderboardModel.createOrUpdateScoreForUsername(this.username, this.score);
+    }
 
     boolean isWorldValid(String entry) {
         if (entry.length() < 4) {
