@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,20 +11,14 @@ public class WordModel {
         return letters;
     }
 
-    private ArrayList<String> allPossibleWords = new ArrayList<>();
+    private final ArrayList<String> allPossibleWords = new ArrayList<>();
 
-    private ArrayList<String>  allPossibleWordsCached = new ArrayList<>();
+    private final ArrayList<String>  allPossibleWordsCached = new ArrayList<>();
 
     public int maxScore = 0;
 
     public int getNumPossibleWords() {
         return allPossibleWords.size();
-    }
-
-    public void shuffleLetters() {
-        List<Character> shuffleMe = new ArrayList<>(this.letters);
-        Collections.shuffle(shuffleMe);
-        this.letters = new TreeSet<>(shuffleMe);
     }
 
     private void calculateHighestPossibleScore() {
@@ -92,7 +85,7 @@ public class WordModel {
         return builtSet.equals(letters);
     }
 
-    private Character getRandomObject(TreeSet<Character> from) {
+    private Character getRandomCharacter(TreeSet<Character> from) {
         Random rnd = new Random();
         int i = rnd.nextInt(from.size());
         return (Character) from.toArray()[i];
@@ -100,13 +93,13 @@ public class WordModel {
 
     private void chooseLetters() {
         Random r = new Random();
-        letters.add(Utils.getRandomVowel());
+        letters.add(Utils.getRandomVowel()); //make sure we have at least 1 vowel
         while (letters.size() < 7) {
             char c = (char) (r.nextInt(26) + 'A');
             letters.add(c);
         }
         System.out.println("letters = " + letters);
-        centerLetter = getRandomObject(letters);
+        centerLetter = getRandomCharacter(letters);
         System.out.println("centerLetter = " + centerLetter);
     }
 
