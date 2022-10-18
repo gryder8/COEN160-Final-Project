@@ -5,10 +5,10 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-//TODO: Modularize this code, specifically event handling
-public class View extends JFrame {
+public class View extends JFrame implements ActionListener {
     private final WordModel dataWordModel = WordModel.shared;
     private final Controller controller = new Controller();
 
@@ -16,11 +16,19 @@ public class View extends JFrame {
     private final JMenu leaderboard = new JMenu("Leaderboard");
     private final JMenuItem showBoard = new JMenuItem("Show Leaderboard");
 
+    private final JTextField wordEntryField = new JTextField();
+    private final JLabel alert = new JLabel();
+
+
     private final JMenu rules = new JMenu("Rules");
     private final JMenuItem showRules = new JMenuItem("Show Rules");
 
     private final JLabel wordsRem = new JLabel("Possible Words: " + (dataWordModel.getNumPossibleWords()));
 
+    private final JButton submitToLeaderboard = new JButton("Submit Score and End Game");
+
+    private final JLabel usernameLbl = new JLabel("Username: ");
+    private final JTextField usernameField = new JTextField(controller.getUsername());
 
     private final JPanel parentContainer = new JPanel();
     private final JPanel honeycombContainer = new JPanel();
@@ -30,7 +38,6 @@ public class View extends JFrame {
 
     private final JSlider scoreSlider = new JSlider();
     private final JLabel scoreDisplay = new JLabel("Score: 0");
-
 
 
     private void updateScoreField() {
@@ -63,7 +70,7 @@ public class View extends JFrame {
 
     private void configureHoneycombView() {
         honeycombContainer.setLayout(new GridLayout(3, 3));
-        boolean isCenter = false;
+        boolean isCenter;
         JLabel center = new JLabel(String.valueOf(dataWordModel.getCenterLetter()));
         Font font = center.getFont();
         Font boldFont = new Font(font.getFontName(), Font.BOLD, 18);
@@ -75,25 +82,25 @@ public class View extends JFrame {
         center.setForeground(Color.black);
         center.setBorder(BorderFactory.createLineBorder(Color.black));
         center.setSize(new Dimension(50, 50));
-        for (char c: WordModel.shared.getLetters()) {
+        for (char c : WordModel.shared.getLetters()) {
             isCenter = dataWordModel.getCenterLetter() == c;
-            JLabel label = new JLabel(String.valueOf(c));
-            label.setFont(boldFont);
-            label.setVerticalAlignment(JLabel.CENTER);
-            label.setHorizontalAlignment(JLabel.CENTER);
-            label.setOpaque(true);
-            label.setBackground(c != dataWordModel.getCenterLetter() ? new Color(153, 152, 152) : new Color(255, 255, 100));
-            label.setForeground(Color.black);
-            label.setBorder(BorderFactory.createLineBorder(Color.black));
-            label.setSize(new Dimension(50, 50));
+            JLabel letterLabel = new JLabel(String.valueOf(c));
+            letterLabel.setFont(boldFont);
+            letterLabel.setVerticalAlignment(JLabel.CENTER);
+            letterLabel.setHorizontalAlignment(JLabel.CENTER);
+            letterLabel.setOpaque(true);
+            letterLabel.setBackground(c != dataWordModel.getCenterLetter() ? new Color(153, 152, 152) : new Color(255, 255, 100));
+            letterLabel.setForeground(Color.black);
+            letterLabel.setBorder(BorderFactory.createLineBorder(Color.black));
+            letterLabel.setSize(new Dimension(50, 50));
             if (!isCenter) {
-                honeycombContainer.add(label);
+                honeycombContainer.add(letterLabel);
             }
-            if (honeycombContainer.getComponentCount() == 3) {
+            if (honeycombContainer.getComponentCount() == 3) { //add the center cell and its empty neighbors
                 JLabel empty1 = new JLabel();
                 JLabel empty2 = new JLabel();
-                empty1.setSize(new Dimension(50,50));
-                empty2.setSize(new Dimension(50,50));
+                empty1.setSize(new Dimension(50, 50));
+                empty2.setSize(new Dimension(50, 50));
                 honeycombContainer.add(empty1);
                 honeycombContainer.add(center);
                 honeycombContainer.add(empty2);
@@ -103,33 +110,14 @@ public class View extends JFrame {
     }
 
     private void configureTextEntry() {
-        JLabel alert = new JLabel();
-        alert.setForeground(Color.red);
         alert.setHorizontalAlignment(0);
         DocumentFilter filter = new UppercaseDocumentFilter();
         userEntryContainer.setLayout(new GridLayout(0, 1));
         wordsRem.setHorizontalAlignment(0);
-        JTextField field = new JTextField();
-        ((AbstractDocument) field.getDocument()).setDocumentFilter(filter);
-        field.setSize(200, 50);
-        ActionListener submitListener = e -> {
-            String word = field.getText().toUpperCase();
-            System.out.println("word = " + word);
-            if (dataWordModel.isValidWord(word)) {
-                alert.setText("");
-               controller.scoreWord(word);
-               field.setText("");
-               scoreSlider.setValue(controller.getScore());
-               updateScoreField();
-               wordsRem.setText("Possible Words: " + dataWordModel.getNumPossibleWords());
-            } else if (word.length() < 4){
-                alert.setText("Word must be at least 4 letters!");
-            } else {
-                alert.setText("Not a valid word!");
-            }
-        };
-        field.addActionListener(submitListener);
-        userEntryContainer.add(field);
+        ((AbstractDocument) wordEntryField.getDocument()).setDocumentFilter(filter);
+        wordEntryField.setSize(200, 50);
+        wordEntryField.addActionListener(this);
+        userEntryContainer.add(wordEntryField);
         userEntryContainer.add(wordsRem);
         userEntryContainer.add(alert);
         userEntryContainer.setVisible(true);
@@ -140,60 +128,25 @@ public class View extends JFrame {
         this.menubar.add(rules);
         leaderboard.add(showBoard);
         rules.add(showRules);
-        ActionListener listener = e -> {
-            if (LeaderboardModel.shared.isEmpty) { return; }
-            JFrame board = new JFrame("Leaderboard");
-            board.setSize(500, 300);
-            JPanel b = createLeaderboardView();
-            b.setVisible(true);
-            b.setSize(500, 300);
-            board.setContentPane(b);
-            board.setVisible(true);
-        };
-        showBoard.addActionListener(listener);
-
-        ActionListener rulesListener = e -> {
-            JOptionPane.showMessageDialog(this, Utils.rules);
-        };
-
-        showRules.addActionListener(rulesListener);
+        showBoard.addActionListener(this);
+        showRules.addActionListener(this);
     }
 
     private void configUserName() {
-        userNameContainer.setLayout(new BorderLayout(0 ,0));
-        userNameContainer.setBorder(BorderFactory.createEmptyBorder(50,100,5,80));
-        final JLabel usernameLbl = new JLabel("Username: ");
-        JTextField usernameField = new JTextField(controller.getUsername());
+        userNameContainer.setLayout(new BorderLayout(0, 0));
+        userNameContainer.setBorder(BorderFactory.createEmptyBorder(50, 100, 5, 80));
         usernameField.setMaximumSize(new Dimension(150, 30));
         usernameField.setPreferredSize(new Dimension(130, 30));
-        ActionListener usernameSubmitListener = e -> {
-            String name = usernameField.getText();
-            if (name.trim().isEmpty()) { return; }
-            controller.setUsername(name);
-            usernameField.setVisible(false);
-            usernameLbl.setText(" Username: " + controller.getUsername());
-        };
-        usernameField.addActionListener(usernameSubmitListener);
+
+        usernameField.addActionListener(this);
         usernameLbl.setHorizontalAlignment(0);
         usernameField.setHorizontalAlignment(SwingConstants.LEADING);
         userNameContainer.add(usernameLbl, BorderLayout.WEST);
         userNameContainer.add(usernameField, BorderLayout.CENTER);
 
-        JButton submitToLeaderboard = new JButton("Submit Score and End Game");
         submitToLeaderboard.setSize(50, 30);
         submitToLeaderboard.setHorizontalAlignment(0);
-        ActionListener submitToBoard = e -> {
-             if (controller.getUsername() != null && !controller.getUsername().isEmpty()) {
-                 controller.submitToLeaderboard();
-                 controller.resetGame();
-                 usernameField.setVisible(true);
-                 updateScoreField();
-                 scoreSlider.setValue(controller.getScore());
-                 usernameLbl.setText("Username: ");
-                 wordsRem.setText("Possible Words: " + (dataWordModel.getNumPossibleWords()));
-             }
-        };
-        submitToLeaderboard.addActionListener(submitToBoard);
+        submitToLeaderboard.addActionListener(this);
         userNameContainer.add(submitToLeaderboard, BorderLayout.SOUTH);
         userNameContainer.setVisible(true);
     }
@@ -230,7 +183,7 @@ public class View extends JFrame {
 
     void present() {
         super.setJMenuBar(this.menubar);
-        parentContainer.setLayout(new GridLayout(0 ,1));
+        parentContainer.setLayout(new GridLayout(0, 1));
         parentContainer.add(topBarContainer);
         parentContainer.add(honeycombContainer);
         parentContainer.add(userEntryContainer);
@@ -243,6 +196,65 @@ public class View extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if (source == submitToLeaderboard) {
+            if (controller.getUsername() != null && !controller.getUsername().isEmpty()) {
+                controller.submitToLeaderboard();
+                controller.resetGame();
+                usernameField.setVisible(true);
+                usernameField.selectAll();
+                updateScoreField();
+                scoreSlider.setValue(controller.getScore());
+                usernameLbl.setText("Username: ");
+                wordsRem.setText("Possible Words: " + (dataWordModel.getNumPossibleWords()));
+                alert.setText("");
+            }
+        } else if (source == usernameField) {
+            String name = usernameField.getText();
+            if (name.trim().isEmpty()) {
+                return;
+            }
+            controller.setUsername(name);
+            usernameField.setVisible(false);
+            usernameLbl.setText(" Username: " + controller.getUsername());
+        } else if (source == wordEntryField) {
+            String word = wordEntryField.getText().toUpperCase();
+            System.out.println("word = " + word);
+            if (dataWordModel.isValidWord(word)) {
+                int score = controller.scoreWord(word);
+                wordEntryField.setText("");
+                scoreSlider.setValue(controller.getScore());
+                updateScoreField();
+                wordsRem.setText("Possible Words: " + dataWordModel.getNumPossibleWords());
+                alert.setForeground(new Color(114, 179, 90));
+                final String points = score > 1 ? " points!" : " point!";
+                alert.setText("You scored " + score + points);
+            } else if (word.length() < 4) {
+                alert.setForeground(Color.red);
+                alert.setText("Word must be at least 4 letters!");
+            } else {
+                alert.setForeground(Color.red);
+                alert.setText(word + " is not a valid word!");
+            }
+        } else if (source == showBoard) {
+            if (LeaderboardModel.shared.isEmpty) {
+                return;
+            }
+            JFrame board = new JFrame("Leaderboard");
+            board.setSize(500, 300);
+            JPanel b = createLeaderboardView();
+            b.setVisible(true);
+            b.setSize(500, 300);
+            board.setContentPane(b);
+            board.setVisible(true);
+        } else if (source == showRules) {
+            JOptionPane.showMessageDialog(this, Utils.rules);
+        } else {
+            System.err.println("Unknown event from" + source);
+        }
+    }
 
 
     private static class UppercaseDocumentFilter extends DocumentFilter {

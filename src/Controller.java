@@ -33,21 +33,15 @@ public class Controller {
         leaderboardModel.createOrUpdateScoreForUsername(this.username, this.score);
     }
 
-    boolean isWorldValid(String entry) {
-        if (entry.length() < 4) {
-            return false;
-        } else {
-            return dataWordModel.isValidWord(entry);
-        }
-    }
     /*
     Assumes the word is valid
      */
-    void scoreWord(String validWord) {
-        int initScore = validWord.length() - 3; //4 letters words are worth 1 point, with 1 point for each letter after
-        initScore += dataWordModel.isPangram(validWord) ? 7 : 0;
-        increaseScoreBy(initScore);
+    int scoreWord(String validWord) {
+        int score = validWord.length() - 3; //4 letters words are worth 1 point, with 1 point for each letter after
+        score += dataWordModel.isPangram(validWord) ? 7 : 0;
+        increaseScoreBy(score);
         wordsScored++;
+        return score;
     }
 
     public void increaseScoreBy(int add) {
