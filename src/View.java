@@ -16,6 +16,9 @@ public class View extends JFrame {
     private final JMenu leaderboard = new JMenu("Leaderboard");
     private final JMenuItem showBoard = new JMenuItem("Show Leaderboard");
 
+    private final JMenu rules = new JMenu("Rules");
+    private final JMenuItem showRules = new JMenuItem("Show Rules");
+
     private final JLabel wordsRem = new JLabel("Possible Words: " + (dataWordModel.getNumPossibleWords()));
 
 
@@ -134,7 +137,9 @@ public class View extends JFrame {
 
     private void configMenu() {
         this.menubar.add(leaderboard);
+        this.menubar.add(rules);
         leaderboard.add(showBoard);
+        rules.add(showRules);
         ActionListener listener = e -> {
             if (LeaderboardModel.shared.isEmpty) { return; }
             JFrame board = new JFrame("Leaderboard");
@@ -146,6 +151,12 @@ public class View extends JFrame {
             board.setVisible(true);
         };
         showBoard.addActionListener(listener);
+
+        ActionListener rulesListener = e -> {
+            JOptionPane.showMessageDialog(this, Utils.rules);
+        };
+
+        showRules.addActionListener(rulesListener);
     }
 
     private void configUserName() {
@@ -188,9 +199,6 @@ public class View extends JFrame {
     }
 
     private JPanel createLeaderboardView() {
-
-
-
         JPanel container = new JPanel();
         Object[][] data = LeaderboardModel.shared.getTableData();
         JTable table = new JTable();

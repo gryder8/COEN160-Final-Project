@@ -62,6 +62,20 @@ public class WordModel {
         return foundCenterLetter;
     }
 
+    private boolean contains2Vowels(String word) {
+        HashMap<Character, Integer> wordMap = new HashMap<>();
+        for (char c : word.toCharArray()) {
+            wordMap.put(c, wordMap.getOrDefault(c, 0) + 1);
+        }
+
+        for (char v : Utils.vowels) {
+            if (wordMap.getOrDefault(v, 0) >= 2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     boolean isValidWord(String word) {
         if (word.length() < 4) {
             return false;
@@ -134,7 +148,7 @@ public class WordModel {
             allPossibleWords.addAll(allPossibleWordsCached);
         } else {
             for (String word : words) {
-                if (onlyContainsValidChars(word)) {
+                if (onlyContainsValidChars(word) && contains2Vowels(word)) {
                     allPossibleWords.add(word);
                 }
             }

@@ -1,6 +1,8 @@
 import java.util.Random;
 
 public class Utils {
+
+    static char[] vowels = { 'A', 'E', 'I', 'O', 'U' };
     public static char getRandomVowel() {
         char[] vowel = { 'A', 'E', 'I', 'O', 'U' };
         Random random = new Random(vowel.length);
@@ -18,4 +20,6 @@ public class Utils {
 
         return true;
     }
+
+    static String rules = "1) All words must have at least 4 letters.\n2) All words must have at least 2 of a vowel from the given letters.";
 }
