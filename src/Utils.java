@@ -21,5 +21,6 @@ public class Utils {
         return true;
     }
 
-    static String rules = "1) All words must have at least 4 letters.\n2) All words must have at least 2 of a certain vowel from the given letters.";
+    static String rules = "1) All words must have at least 4 letters.\n2) All words must have at least 2 of a certain vowel from the given letters.\n" +
+            "3) The center letter must be in the word\n NOTE: The letters are not guaranteed to form a pangram due to rule 2";
 }

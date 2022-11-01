@@ -149,6 +149,7 @@ public class View extends JFrame implements ActionListener {
         submitToLeaderboard.addActionListener(this);
         userNameContainer.add(submitToLeaderboard, BorderLayout.SOUTH);
         userNameContainer.setVisible(true);
+        submitToLeaderboard.setEnabled(controller.getUsername() != null);
     }
 
     private JPanel createLeaderboardView() {
@@ -196,6 +197,7 @@ public class View extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -204,6 +206,8 @@ public class View extends JFrame implements ActionListener {
                 controller.submitToLeaderboard();
                 controller.resetGame();
                 usernameField.setVisible(true);
+                controller.setUsername(null);
+                submitToLeaderboard.setEnabled(false);
                 usernameField.selectAll();
                 updateScoreField();
                 scoreSlider.setValue(controller.getScore());
@@ -216,9 +220,10 @@ public class View extends JFrame implements ActionListener {
             if (name.trim().isEmpty()) {
                 return;
             }
-            controller.setUsername(name);
+            controller.setUsername(name.trim());
             usernameField.setVisible(false);
             usernameLbl.setText(" Username: " + controller.getUsername());
+            submitToLeaderboard.setEnabled(true);
         } else if (source == wordEntryField) {
             String word = wordEntryField.getText().toUpperCase();
             System.out.println("word = " + word);
@@ -230,7 +235,7 @@ public class View extends JFrame implements ActionListener {
                 wordsRem.setText("Possible Words: " + dataWordModel.getNumPossibleWords());
                 alert.setForeground(new Color(114, 179, 90));
                 final String points = score > 1 ? " points!" : " point!";
-                alert.setText("You scored " + score + points);
+                alert.setText("You scored " + score + points + " " + controller.flavorStringFor(score));
             } else if (word.length() < 4) {
                 alert.setForeground(Color.red);
                 alert.setText("Word must be at least 4 letters!");
@@ -250,7 +255,7 @@ public class View extends JFrame implements ActionListener {
             board.setContentPane(b);
             board.setVisible(true);
         } else if (source == showRules) {
-            JOptionPane.showMessageDialog(this, Utils.rules);
+            JOptionPane.showMessageDialog(this, Utils.rules, "Rules", JOptionPane.INFORMATION_MESSAGE);
         } else {
             System.err.println("Unknown event from" + source);
         }

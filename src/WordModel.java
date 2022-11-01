@@ -120,7 +120,7 @@ public class WordModel {
     private void readWordsFromFile() {
         long startTime = System.nanoTime();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("data/words.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("data/usa-words.txt"));
             String word;
             while((word = reader.readLine()) != null) {
                 word = word.trim();
@@ -153,6 +153,11 @@ public class WordModel {
                 }
             }
             allPossibleWordsCached.addAll(allPossibleWords);
+        }
+        if (allPossibleWords.size() == 0) {
+            System.err.println("No possible words found! Choosing new letters.");
+            chooseLetters();
+            calcAllValidWords();
         }
         long runTime = System.nanoTime() - startTime;
         System.out.println("Generating words took " + runTime/1E6 + " ms") ;

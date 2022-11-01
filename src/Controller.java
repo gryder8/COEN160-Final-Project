@@ -44,6 +44,18 @@ public class Controller {
         return score;
     }
 
+    String flavorStringFor(int score) {
+        return switch (score) {
+            case 1 -> "";
+            case 2 -> "Solid!";
+            case 3 -> "Great!";
+            case 4 -> "Amazing!";
+            case 5 -> "Wow!";
+            case 6 -> "Incredible!";
+            default -> "Genius!";
+        };
+    }
+
     public void increaseScoreBy(int add) {
         this.score += add;
     }
