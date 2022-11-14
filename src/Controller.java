@@ -1,3 +1,5 @@
+import javax.swing.*;
+
 public class Controller {
     private int score;
     private int wordsScored;
@@ -20,10 +22,13 @@ public class Controller {
         return score;
     }
 
+    public DefaultListModel<String> validWordsAndScores = new DefaultListModel<>();
+
     public void resetGame() {
         this.username = "";
         this.score = 0;
         dataWordModel.resetValidWords();
+        validWordsAndScores.clear();
     }
 
     private final WordModel dataWordModel = WordModel.shared;

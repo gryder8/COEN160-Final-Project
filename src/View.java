@@ -30,11 +30,15 @@ public class View extends JFrame implements ActionListener {
     private final JLabel usernameLbl = new JLabel("Username: ");
     private final JTextField usernameField = new JTextField(controller.getUsername());
 
-    private final JPanel parentContainer = new JPanel();
+    private final JPanel gameElementsParentContainer = new JPanel();
     private final JPanel honeycombContainer = new JPanel();
     private final JPanel userEntryContainer = new JPanel();
     private final JPanel userNameContainer = new JPanel();
     private final JPanel topBarContainer = new JPanel();
+
+    private final JPanel submittedListContainer = new JPanel();
+
+    private final JList<String> submittedWordsAndScores = new JList<>(controller.validWordsAndScores);
 
     private final JSlider scoreSlider = new JSlider();
     private final JLabel scoreDisplay = new JLabel("Score: 0");
@@ -123,6 +127,15 @@ public class View extends JFrame implements ActionListener {
         userEntryContainer.setVisible(true);
     }
 
+    private void configValidWordsList() {
+        submittedListContainer.setLayout(new GridLayout(0,1));
+        submittedWordsAndScores.setPreferredSize(new Dimension(200, 200));
+        submittedListContainer.add(submittedWordsAndScores);
+        submittedWordsAndScores.setModel(controller.validWordsAndScores);
+        submittedListContainer.setPreferredSize(new Dimension(200, 200));
+
+    }
+
     private void configMenu() {
         this.menubar.add(leaderboard);
         this.menubar.add(rules);
@@ -180,17 +193,25 @@ public class View extends JFrame implements ActionListener {
         configureHoneycombView();
         configMenu();
         configUserName();
+        configValidWordsList();
     }
 
     void present() {
+        int[] colWidths = new int[]{450, 150};
+        GridBagLayout gbl = new GridBagLayout();
+        gbl.columnWidths = colWidths;
         super.setJMenuBar(this.menubar);
-        parentContainer.setLayout(new GridLayout(0, 1));
-        parentContainer.add(topBarContainer);
-        parentContainer.add(honeycombContainer);
-        parentContainer.add(userEntryContainer);
-        parentContainer.add(userNameContainer);
-        setContentPane(parentContainer);
-        setSize(500, 500);
+        JPanel superContainer = new JPanel();
+        superContainer.setLayout(gbl);
+        gameElementsParentContainer.setLayout(new GridLayout(0, 1));
+        gameElementsParentContainer.add(topBarContainer);
+        gameElementsParentContainer.add(honeycombContainer);
+        gameElementsParentContainer.add(userEntryContainer);
+        gameElementsParentContainer.add(userNameContainer);
+        superContainer.add(gameElementsParentContainer);
+        superContainer.add(submittedListContainer);
+        setContentPane(superContainer);
+        setSize(600, 500);
         setResizable(false);
         setVisible(true);
         updateUI();
@@ -229,6 +250,7 @@ public class View extends JFrame implements ActionListener {
             System.out.println("word = " + word);
             if (dataWordModel.isValidWord(word)) {
                 int score = controller.scoreWord(word);
+                controller.validWordsAndScores.addElement("      "+word + ": +"+score+"      ");
                 wordEntryField.setText("");
                 scoreSlider.setValue(controller.getScore());
                 updateScoreField();
